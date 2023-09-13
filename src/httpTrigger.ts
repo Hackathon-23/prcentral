@@ -62,33 +62,6 @@ const httpTrigger: AzureFunction = async function (
       })
     );
     */
-    const { eventType } = req.body;
-
-    // Comment Event
-    if (eventType && eventType.includes("pullrequest-comment-event")) {
-
-      let emoji = "🧐";
-     
-      try {
-        const sentiment = (await analyzeSentiment(req.body.resource.comment.content)).choices[0].message.content;
-        console.log("TRYING ....", sentiment);
-        if(sentiment.toLowerCase().includes("positive")) {
-          emoji = "😄"
-        } else if(sentiment.toLowerCase().includes("negative")) {
-          emoji = "😡"
-        } else if(sentiment.toLowerCase().includes("neutral")) {
-          emoji = "😐"
-        }
-      } catch (e) {
-        console.log("An error occurred while generating sentiment.");
-      }
-      
-      await target.sendAdaptiveCard(
-        AdaptiveCards.declare<CardData>(commentTemplate).render({...req.body, message: {...req.body.message, emoji}})
-      );
-      return;
-    }
-   
 
     await target.sendAdaptiveCard(
       AdaptiveCards.declare<CardData>(notificationTemplate).render({
