@@ -9,18 +9,25 @@
             "wrap": true
         },
         {
-            "type": "TextBlock",
-            "text": "${resource.comment.content}",
-            "wrap": true
+            "type": "Container",
+            "items": [
+                {
+                    "type": "TextBlock",
+                    "text": "${resource.comment.content}",
+                    "wrap": true,
+                    "separator": true
+                }
+            ],
+            "style": "emphasis"
         },
         {
             "type": "TextBlock",
-            "text": "Comment: ${resource.comment._links.threads.href}",
+            "text": "[View Comment](${resource.comment._links.threads.href})",
             "isSubtle": true,
             "color": "Accent",
             "weight": "Bolder",
-            "size": "Medium",
-            "spacing": "None"
+            "size": "Small",
+            "spacing": "Small"
         },
         {
             "type": "ColumnSet",
