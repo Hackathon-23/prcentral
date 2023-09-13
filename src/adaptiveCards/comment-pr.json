@@ -59,12 +59,12 @@
                             "type": "ActionSet",
                             "actions": [
                                 {
-                                    "type": "Action.ShowCard",
+                                    "type": "Action.Submit",
                                     "title": "Rephrase",
-                                    "card": {
-                                        "type": "AdaptiveCard"
-                                    },
-                                    "style": "positive"
+                                    "style": "positive",
+                                    "data":{
+                                        "value": "${resource.comment.content}"
+                                    }
                                 }
                             ]
                         }
