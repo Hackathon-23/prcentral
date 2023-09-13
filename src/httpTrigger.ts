@@ -4,6 +4,7 @@ import notificationTemplate from "./adaptiveCards/notification-default.json";
 import commentTemplate from "./adaptiveCards/comment-pr.json";
 import { CardData } from "./cardModels";
 import { notificationApp } from "./internal/initialize";
+import { analyzeSentiment } from "./internal/analyzeSentiment";
 
 // An Azure Function HTTP trigger.
 //
@@ -73,11 +74,29 @@ const httpTrigger: AzureFunction = async function (
 
     // Comment Event
     if (eventType && eventType.includes("pullrequest-comment-event")) {
+
+      let emoji = "🧐";
+     
+      try {
+        const sentiment = (await analyzeSentiment(req.body.resource.comment.content)).choices[0].message.content;
+        console.log("TRYING ....", sentiment);
+        if(sentiment.toLowerCase().includes("positive")) {
+          emoji = "😄"
+        } else if(sentiment.toLowerCase().includes("negative")) {
+          emoji = "😡"
+        } else if(sentiment.toLowerCase().includes("neutral")) {
+          emoji = "😐"
+        }
+      } catch (e) {
+        console.log("An error occurred while generating sentiment.");
+      }
+      
       await target.sendAdaptiveCard(
-        AdaptiveCards.declare<CardData>(commentTemplate).render(req.body)
+        AdaptiveCards.declare<CardData>(commentTemplate).render({...req.body, message: {...req.body.message, emoji}})
       );
       return;
     }
+   
 
     await target.sendAdaptiveCard(
       AdaptiveCards.declare<CardData>(notificationTemplate).render({
