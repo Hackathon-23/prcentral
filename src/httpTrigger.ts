@@ -18,18 +18,39 @@ import { analyzeSentiment } from "./internal/analyzeSentiment";
 // You can add authentication / authorization for this API. Refer to
 // https://aka.ms/teamsfx-notification for more details.
 
- /** You can also find someone and notify the individual person
+/** You can also find someone and notify the individual person
   const member = await notificationApp.notification.findMember(
     async (m) => m.account.email === "someone@contoso.com"
   );
   await member?.sendAdaptiveCard(...);
   **/
 
-
 const httpTrigger: AzureFunction = async function (
   context: Context,
   req: HttpRequest
 ): Promise<void> {
+  const { eventType } = req.body;
+
+  // Comment Event
+  if (eventType && eventType.includes("pullrequest-comment-event")) {
+    const { resource } = req.body;
+    const { pullRequest, comment } = resource;
+
+    // For now: Find the member who created the PR and make sure it's not the same person who left the comment
+    const member = await notificationApp.notification.findMember(
+      async (m) =>
+        m.account.email === pullRequest.createdBy.uniqueName &&
+        pullRequest.createdBy.uniqueName !== comment.author.uniqueName
+    );
+
+    if (member) {
+      await member.sendAdaptiveCard(
+        AdaptiveCards.declare<CardData>(commentTemplate).render(req.body)
+      );
+    }
+    return;
+  }
+
   // By default this function will iterate all the installation points and send an Adaptive Card
   // to every installation.
   for (const target of await notificationApp.notification.installations()) {
@@ -39,7 +60,7 @@ const httpTrigger: AzureFunction = async function (
       membersEmails.push(member.account.email);
     }
 
-/*
+    /*
     await target.sendAdaptiveCard(
       AdaptiveCards.declare<CardData>(notificationTemplate).render({
         title: "New Event Occurred!",
@@ -85,7 +106,6 @@ const httpTrigger: AzureFunction = async function (
         notificationUrl: "https://aka.ms/teamsfx-notification-new",
       })
     );
-
 
     // Note - you can filter the installations if you don't want to send the event to every installation.
 
