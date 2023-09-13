@@ -1,6 +1,7 @@
 import { AzureFunction, Context, HttpRequest } from "@azure/functions";
 import { AdaptiveCards } from "@microsoft/adaptivecards-tools";
 import notificationTemplate from "./adaptiveCards/notification-default.json";
+import commentTemplate from "./adaptiveCards/comment-pr.json";
 import { CardData } from "./cardModels";
 import { notificationApp } from "./internal/initialize";
 
@@ -47,6 +48,15 @@ const httpTrigger: AzureFunction = async function (
       })
     );
     */
+    const { eventType } = req.body;
+
+    // Comment Event
+    if (eventType && eventType.includes("pullrequest-comment-event")) {
+      await target.sendAdaptiveCard(
+        AdaptiveCards.declare<CardData>(commentTemplate).render(req.body)
+      );
+      return;
+    }
 
     await target.sendAdaptiveCard(
       AdaptiveCards.declare<CardData>(notificationTemplate).render({

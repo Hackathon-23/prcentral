@@ -1,0 +1,111 @@
+{
+    "type": "AdaptiveCard",
+    "body": [
+        {
+            "type": "TextBlock",
+            "size": "Medium",
+            "weight": "Bolder",
+            "text": "${message.text} in ${resource.pullRequest.repository.name} repo",
+            "wrap": true
+        },
+        {
+            "type": "TextBlock",
+            "text": "${resource.comment.content}",
+            "wrap": true
+        },
+        {
+            "type": "TextBlock",
+            "text": "Comment: ${resource.comment._links.threads.href}",
+            "isSubtle": true,
+            "color": "Accent",
+            "weight": "Bolder",
+            "size": "Medium",
+            "spacing": "None"
+        },
+        {
+            "type": "ColumnSet",
+            "columns": [
+                {
+                    "type": "Column",
+                    "width": "stretch",
+                    "items": [
+                        {
+                            "type": "ActionSet",
+                            "actions": [
+                                {
+                                    "type": "Action.ShowCard",
+                                    "title": "Summarize",
+                                    "card": {
+                                        "type": "AdaptiveCard"
+                                    },
+                                    "style": "positive"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "stretch",
+                    "items": [
+                        {
+                            "type": "ActionSet",
+                            "actions": [
+                                {
+                                    "type": "Action.ShowCard",
+                                    "title": "Rephrase",
+                                    "card": {
+                                        "type": "AdaptiveCard"
+                                    },
+                                    "style": "positive"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "stretch",
+                    "items": [
+                        {
+                            "type": "ActionSet",
+                            "actions": [
+                                {
+                                    "type": "Action.ShowCard",
+                                    "title": "Suggestion",
+                                    "card": {
+                                        "type": "AdaptiveCard"
+                                    },
+                                    "style": "positive",
+                                    "role": "Button"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "stretch",
+                    "items": [
+                        {
+                            "type": "ActionSet",
+                            "actions": [
+                                {
+                                    "type": "Action.ShowCard",
+                                    "title": "Translate",
+                                    "card": {
+                                        "type": "AdaptiveCard"
+                                    },
+                                    "style": "positive",
+                                    "role": "Button"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.6"
+}
