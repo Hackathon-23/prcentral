@@ -4,6 +4,8 @@ import notificationTemplate from "./adaptiveCards/notification-default.json";
 import commentTemplate from "./adaptiveCards/comment-pr.json";
 import { CardData } from "./cardModels";
 import { notificationApp } from "./internal/initialize";
+import CommentEventEntryPoint from "./commentEvent";
+import MergeRequestEntryPoint from "./mergeRequestEvent";
 
 // An Azure Function HTTP trigger.
 //
@@ -32,22 +34,12 @@ const httpTrigger: AzureFunction = async function (
 
   // Comment Event
   if (eventType && eventType.includes("pullrequest-comment-event")) {
-    const { resource } = req.body;
-    const { pullRequest, comment } = resource;
+    return CommentEventEntryPoint(context.res, req);
+  }
 
-    // For now: Find the member who created the PR and make sure it's not the same person who left the comment
-    const member = await notificationApp.notification.findMember(
-      async (m) =>
-        m.account.email === pullRequest.createdBy.uniqueName &&
-        pullRequest.createdBy.uniqueName !== comment.author.uniqueName
-    );
-
-    if (member) {
-      await member.sendAdaptiveCard(
-        AdaptiveCards.declare<CardData>(commentTemplate).render(req.body)
-      );
-    }
-    return;
+  // Merge Request Event
+  if (eventType && eventType.includes("merge-request")) {
+    return MergeRequestEntryPoint(context.res, req);
   }
 
   // By default this function will iterate all the installation points and send an Adaptive Card
