@@ -26,7 +26,7 @@ const MergeRequestEntryPoint = async (res, req) => {
 
   if (member) {
     await member.sendAdaptiveCard(
-      AdaptiveCards.declare<any>(mergeRequestTemplate).render(sampleBody)
+      AdaptiveCards.declare<any>(mergeRequestTemplate).render(req.body)
     );
     return res.status(200).send("Merge Request Notification Sent to Approver");
   }
