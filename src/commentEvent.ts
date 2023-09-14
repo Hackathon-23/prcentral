@@ -4,7 +4,7 @@ import { notificationApp } from "./internal/initialize";
 import { analyzeSentiment, rephraseComment } from "./internal/gptActions";
 import { url } from "inspector";
 
-export const CommentEventEntryPoint = async (res, req) => {
+const CommentEventEntryPoint = async (res, req) => {
   const { resource } = req.body;
   const { pullRequest, comment } = resource;
 

@@ -18,6 +18,7 @@ appsettings.json
 .DS_Store
 .deployment
 .env
+.env.dev
 
 # build
 /dist
