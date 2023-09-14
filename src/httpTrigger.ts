@@ -3,6 +3,10 @@ import { AdaptiveCards } from "@microsoft/adaptivecards-tools";
 import notificationTemplate from "./adaptiveCards/notification-default.json";
 import { CardData } from "./cardModels";
 import { notificationApp } from "./internal/initialize";
+import CommentEventEntryPoint from "./commentEvent";
+import MergeRequestEntryPoint from "./mergeRequestEvent";
+import { pullRequestComments } from "./store";
+
 
 // An Azure Function HTTP trigger.
 //
@@ -16,18 +20,39 @@ import { notificationApp } from "./internal/initialize";
 // You can add authentication / authorization for this API. Refer to
 // https://aka.ms/teamsfx-notification for more details.
 
- /** You can also find someone and notify the individual person
+/** You can also find someone and notify the individual person
   const member = await notificationApp.notification.findMember(
     async (m) => m.account.email === "someone@contoso.com"
   );
   await member?.sendAdaptiveCard(...);
   **/
 
-
 const httpTrigger: AzureFunction = async function (
   context: Context,
   req: HttpRequest
 ): Promise<void> {
+  const { eventType } = req.body;
+
+  // Comment Event
+  if (eventType && eventType.includes("pullrequest-comment-event")) {
+    const pullRequestId = req.body.resource.pullRequest.pullRequestId;
+    const prData = {
+      author: req.body.resource.comment.author.displayName,
+      comment: req.body.resource.comment.content,
+    }
+    if (pullRequestComments[pullRequestId] === undefined) {
+      pullRequestComments[pullRequestId] = [prData];
+    } else {
+      pullRequestComments[pullRequestId].push(prData);
+    }
+    return CommentEventEntryPoint(context.res, req);
+  }
+
+  // Merge Request Event
+  if (eventType && eventType.includes("merge-request")) {
+    return MergeRequestEntryPoint(context.res, req);
+  }
+
   // By default this function will iterate all the installation points and send an Adaptive Card
   // to every installation.
   for (const target of await notificationApp.notification.installations()) {
@@ -37,7 +62,7 @@ const httpTrigger: AzureFunction = async function (
       membersEmails.push(member.account.email);
     }
 
-/*
+    /*
     await target.sendAdaptiveCard(
       AdaptiveCards.declare<CardData>(notificationTemplate).render({
         title: "New Event Occurred!",
@@ -56,7 +81,6 @@ const httpTrigger: AzureFunction = async function (
         notificationUrl: "https://aka.ms/teamsfx-notification-new",
       })
     );
-
 
     // Note - you can filter the installations if you don't want to send the event to every installation.
 

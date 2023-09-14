@@ -1,0 +1,135 @@
+{
+  "type": "AdaptiveCard",
+  "body": [
+    {
+      "type": "Container",
+      "style": "emphasis",
+      "items": [
+        {
+          "type": "ColumnSet",
+          "columns": [
+            {
+              "type": "Column",
+              "items": [
+                {
+                  "type": "TextBlock",
+                  "size": "Large",
+                  "weight": "Bolder",
+                  "text": "**MERGE REQUEST**",
+                  "style": "heading",
+                  "wrap": true
+                }
+              ],
+              "width": "stretch"
+            },
+            {
+              "type": "Column",
+              "items": [
+                {
+                  "type": "TextBlock",
+                  "text": "PR Status",
+                  "horizontalAlignment": "Right",
+                  "isSubtle": true,
+                  "wrap": true
+                },
+                {
+                  "type": "TextBlock",
+                  "text": "PASSED",
+                  "horizontalAlignment": "Right",
+                  "spacing": "None",
+                  "size": "Large",
+                  "color": "Good",
+                  "wrap": true
+                }
+              ],
+              "width": "stretch"
+            }
+          ]
+        }
+      ],
+      "bleed": true
+    },
+    {
+      "type": "Container",
+      "items": [
+        {
+          "type": "TextBlock",
+          "spacing": "small",
+          "size": "small",
+          "weight": "bolder",
+          "text": "[View Pull Request](${pr_link})",
+          "wrap": true
+        },
+        {
+          "type": "FactSet",
+          "spacing": "Large",
+          "facts": [
+            {
+              "title": "Submitted By",
+              "value": "**${created_by_name}**  ${creater_email}"
+            },
+            {
+              "title": "Submitted On",
+              "value": "${formatDateTime(submitted_date, 'yyyy-MM-dd')}"
+            },
+            {
+              "title": "Awaiting approval from",
+              "value": "**${approver}**  ${approver_email}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Container",
+      "items": [
+        {
+          "type": "ActionSet",
+          "actions": [
+            {
+              "type": "Action.Submit",
+              "title": "Approve",
+              "style": "positive",
+              "data": {
+                "id": "_qkQW8dJlUeLVi7ZMEzYVw",
+                "action": "approve"
+              }
+            },
+            {
+              "type": "Action.ShowCard",
+              "title": "Reject",
+              "style": "destructive",
+              "card": {
+                "type": "AdaptiveCard",
+                "body": [
+                  {
+                    "type": "Input.Text",
+                    "id": "RejectCommentID",
+                    "label": "Please specify an appropriate reason for rejection",
+                    "isMultiline": true,
+                    "isRequired": true,
+                    "errorMessage": "A reason for rejection is necessary"
+                  }
+                ],
+                "actions": [
+                  {
+                    "type": "Action.Submit",
+                    "title": "Send",
+                    "data": {
+                      "id": "_qkQW8dJlUeLVi7ZMEzYVw",
+                      "action": "reject"
+                    }
+                  }
+                ],
+                "$schema": "http://adaptivecards.io/schemas/adaptive-card.json"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "version": "1.6",
+  "fallbackText": "This card requires Adaptive Cards v1.5 support to be rendered properly."
+}
