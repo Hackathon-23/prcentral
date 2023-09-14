@@ -1,7 +1,7 @@
 import { AdaptiveCards } from "@microsoft/adaptivecards-tools";
 import commentTemplate from "./adaptiveCards/comment-pr.json";
 import { notificationApp } from "./internal/initialize";
-import { analyzeSentiment } from "./internal/gptActions";
+import { analyzeSentiment, rephraseComment } from "./internal/gptActions";
 
 const CommentEventEntryPoint = async (res, req) => {
   const { resource } = req.body;
@@ -14,12 +14,15 @@ const CommentEventEntryPoint = async (res, req) => {
     //&& pullRequest.createdBy.uniqueName !== comment.author.uniqueName
   );
 
+  console.log("members"+member);
+  
+  
+
   let emoji = "🧐";
   let commentScroll = Date.parse(req.body.resource.comment.publishedDate)/1000;
   let newCommentUrlTimestamp= commentScroll.toFixed();
   
 
-  try {
     const sentiment = (
       await analyzeSentiment(req.body.resource.comment.content)
     ).choices[0].message.content;
@@ -32,9 +35,7 @@ const CommentEventEntryPoint = async (res, req) => {
     } else if (sentiment.toLowerCase().includes("neutral")) {
       emoji = "😐";
     }
-  } catch (e) {
-    console.log("An error occurred while generating sentiment.");
-  }
+  
   const baseUrl =  req.body.resource.pullRequest.repository.remoteUrl.split("@"); 
   const newUrl = 'https://'+baseUrl[1]+'/pullrequest/'+req.body.resource.pullRequest.pullRequestId+'#'+newCommentUrlTimestamp;
 
@@ -43,6 +44,18 @@ const CommentEventEntryPoint = async (res, req) => {
       AdaptiveCards.declare<any>(commentTemplate).render({
         ...req.body,
         message: { ...req.body.message, emoji },
+        commentUrl: newUrl
+      })
+    );
+  }
+
+  if(comment.author.uniqueName && sentiment && sentiment.toLowerCase().includes("negative")){
+    const phrased = rephraseComment(req.body.message);
+    const feedback = "Hey"+ comment.author.uniqueName +", you left a comment on Carol PR and it was abit harsh. This is how you can make it better." + phrased;
+    await comment.author.uniqueName.sendAdaptiveCard(
+      AdaptiveCards.declare<any>(commentTemplate).render({
+        ...req.body,
+        message: { feedback, emoji },
         commentUrl: newUrl
       })
     );
