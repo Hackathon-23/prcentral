@@ -1,5 +1,8 @@
 import { ActivityHandler, CardFactory } from "botbuilder";
-import { rephraseComment, translateComment } from "./internal/gptActions";
+import { rephraseComment, translateComment, summarizePrComments } from "./internal/gptActions";
+
+
+import { pullRequestComments } from "./store";
 
 const resultOutputCard = ({
   title,
@@ -50,25 +53,48 @@ export class TeamsBot extends ActivityHandler {
     super();
 
     this.onMessage(async (context, next) => {
-      console.log(context.activity.value.event, "Context");
       switch (context.activity.value.event) {
         case "rephrase":
           const title = "Rephrasing is complete ✅";
           const rephrased = await rephraseComment(context.activity.value.value);
-          const content = rephrased.choices[0].message.content;
+          const rephrasedContent = rephrased.choices[0].message.content;
           const card = CardFactory.adaptiveCard(
-            resultOutputCard({ title, content })
+            resultOutputCard({ title, content: rephrasedContent })
           );
-          context.sendActivity({ attachments: [card] });
+          await context.sendActivity({ attachments: [card] });
           next();
           break;
 
         case "translate":
           const translation = await translateComment(context.activity.value.value);
-          //context.sendActivity(translation);
-          next();
+          try {
+            const title = "Translation is complete ✅"
+            const translatedContent = translation.choices[0].message.content;
+            const card = CardFactory.adaptiveCard(
+              resultOutputCard({ title, content: translatedContent })
+            );
+            await context.sendActivity({ attachments: [card] });
+            next();
+          } catch (e) {
+            console.error("An error occurred while generating the translations", e);
+          }
           break;
-        case "summarize":
+
+        case "summary":
+          try {
+            const title = `Summarization of Pull Request #${context.activity.value.value} comments is complete ✅`;
+            const pr = pullRequestComments[context.activity.value.value]
+            const mappedComments = pr.map((comment, index) => `${index + 1}. ${comment.author} commented ${comment.comment}`).join("\n");
+            const summary = await summarizePrComments(mappedComments);
+            const content = summary.choices[0].message.content;
+            const card = CardFactory.adaptiveCard(
+              resultOutputCard({ title, content })
+            );
+            await context.sendActivity({ attachments: [card] });
+            next();
+          } catch (e) {
+            console.error("An error occurred while generating the summary", e);
+          }
           break;
         case "suggest":
           break;
