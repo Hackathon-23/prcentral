@@ -41,11 +41,11 @@
                             "actions": [
                                 {
                                     "type": "Action.Submit",
-                                    "title": "Summary",
+                                    "title": "📃 Summary",
                                     "style": "positive",
                                     "data": {
                                         "event": "summary",
-                                        "value": "${resource.comment.content}"
+                                        "value": "${resource.pullRequest.pullRequestId}"
                                     }
 
                                 }
@@ -62,11 +62,12 @@
                             "actions": [
                                 {
                                     "type": "Action.Submit",
-                                    "title": "Rephrase",
+                                    "title": "🔂 Rephrase",
                                     "style": "positive",
                                     "data":{
                                         "event": "rephrase",
-                                        "value": "${resource.comment.content}"
+                                        "value": "${resource.comment.content}",
+                                        "author": "${resource.comment.author.displayName}"
                                     }
                                 }
                             ]
@@ -81,28 +82,8 @@
                             "type": "ActionSet",
                             "actions": [
                                 {
-                                    "type": "Action.ShowCard",
-                                    "title": "Suggest",
-                                    "card": {
-                                        "type": "AdaptiveCard"
-                                    },
-                                    "style": "positive",
-                                    "role": "Button"
-                                }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    "type": "Column",
-                    "width": "stretch",
-                    "items": [
-                        {
-                            "type": "ActionSet",
-                            "actions": [
-                                {
                                     "type": "Action.Submit",
-                                    "title": "Translate",
+                                    "title": " 🌍 Translate",
                                     "data": {
                                         "event": "translate",
                                         "value": "${resource.comment.content}"

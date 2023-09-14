@@ -10,8 +10,8 @@ const CommentEventEntryPoint = async (res, req) => {
   // For now: Find the member who created the PR and make sure it's not the same person who left the comment
   const member = await notificationApp.notification.findMember(
     async (m) =>
-      m.account.email === pullRequest.createdBy.uniqueName &&
-      pullRequest.createdBy.uniqueName !== comment.author.uniqueName
+      m.account.email === pullRequest.createdBy.uniqueName
+    //&& pullRequest.createdBy.uniqueName !== comment.author.uniqueName
   );
 
   console.log("members"+member);
@@ -26,7 +26,6 @@ const CommentEventEntryPoint = async (res, req) => {
     const sentiment = (
       await analyzeSentiment(req.body.resource.comment.content)
     ).choices[0].message.content;
-    console.log("TRYING ....", sentiment);
 
     if (!sentiment) {
     } else if (sentiment.toLowerCase().includes("positive")) {
@@ -39,8 +38,6 @@ const CommentEventEntryPoint = async (res, req) => {
   
   const baseUrl =  req.body.resource.pullRequest.repository.remoteUrl.split("@"); 
   const newUrl = 'https://'+baseUrl[1]+'/pullrequest/'+req.body.resource.pullRequest.pullRequestId+'#'+newCommentUrlTimestamp;
-
-  console.log("newUrl: " +newUrl);
 
   if (member) {
     await member.sendAdaptiveCard(
