@@ -1,8 +1,6 @@
 import { ActivityHandler, CardFactory } from "botbuilder";
-import { rephraseComment, translateComment } from "./internal/gptActions";
-
-import { ActivityHandler } from "botbuilder";
 import { rephraseComment, translateComment, summarizePrComments } from "./internal/gptActions";
+
 
 import { pullRequestComments } from "./store";
 
