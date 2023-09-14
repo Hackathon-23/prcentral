@@ -22,13 +22,13 @@
         },
         {
             "type": "TextBlock",
-            "text": "[View Comment](${resource.comment._links.threads.href})",
+            "text": "[View Comment](${commentUrl})",
             "isSubtle": true,
             "color": "Accent",
             "weight": "Bolder",
             "size": "Small",
             "spacing": "Small"
-        },
+        }, 
         {
             "type": "ColumnSet",
             "columns": [

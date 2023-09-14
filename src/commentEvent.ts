@@ -15,6 +15,9 @@ const CommentEventEntryPoint = async (res, req) => {
   );
 
   let emoji = "🧐";
+  let commentScroll = Date.parse(req.body.resource.comment.publishedDate)/1000;
+  let newCommentUrlTimestamp= commentScroll.toFixed();
+  
 
   try {
     const sentiment = (
@@ -33,12 +36,17 @@ const CommentEventEntryPoint = async (res, req) => {
   } catch (e) {
     console.log("An error occurred while generating sentiment.");
   }
+  const baseUrl =  req.body.resource.pullRequest.repository.remoteUrl.split("@"); 
+  const newUrl = 'https://'+baseUrl[1]+'/pullrequest/'+req.body.resource.pullRequest.pullRequestId+'#'+newCommentUrlTimestamp;
+
+  console.log("newUrl: " +newUrl);
 
   if (member) {
     await member.sendAdaptiveCard(
       AdaptiveCards.declare<any>(commentTemplate).render({
         ...req.body,
         message: { ...req.body.message, emoji },
+        commentUrl: newUrl
       })
     );
   }
