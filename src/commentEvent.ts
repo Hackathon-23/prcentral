@@ -10,11 +10,10 @@ const CommentEventEntryPoint = async (res, req) => {
 
   // For now: Find the member who created the PR and make sure it's not the same person who left the comment
   const member = await notificationApp.notification.findMember(
-    async (m) => m.account.email === pullRequest.createdBy.uniqueName
-    //&& pullRequest.createdBy.uniqueName !== comment.author.uniqueName
+    async (m) =>
+      m.account.email === pullRequest.createdBy.uniqueName &&
+      pullRequest.createdBy.uniqueName !== comment.author.uniqueName
   );
-
-  console.log("members" + member);
 
   let emoji = "🧐";
   let commentScroll =
@@ -43,29 +42,26 @@ const CommentEventEntryPoint = async (res, req) => {
     newCommentUrlTimestamp;
 
   if (member) {
-    sendAdaptiveCardMethod(member, req, req.body.message, emoji, newUrl);
+    sendAdaptiveCardMethod(member, req, req.body.message.text, emoji, newUrl);
   }
-
+  const commenterMember = await notificationApp.notification.findMember(
+    async (m) => m.account.email === comment.author.uniqueName
+  );
   if (
-    comment.author.uniqueName &&
     sentiment &&
+    commenterMember &&
     sentiment.toLowerCase().includes("negative")
   ) {
-    const phrased = rephraseComment(req.body.message);
+    const phrased = await rephraseComment(req.body.resource.comment.content);
+    const rephrasedContent = phrased.choices[0].message.content;
     const feedback =
-      "Hey" +
-      comment.author.uniqueName +
+      "Hey " +
+      comment.author.displayName +
       ", you left a comment on " +
-      pullRequest.createdBy.uniqueName +
-      " PR and it was abit harsh. This is how you can make it better." +
-      phrased;
-    sendAdaptiveCardMethod(
-      comment.author.uniqueName,
-      req,
-      feedback,
-      emoji,
-      newUrl
-    );
+      pullRequest.createdBy.displayName +
+      " PR and it was a bit harsh. This is how you can make it better." +
+      rephrasedContent;
+    sendAdaptiveCardMethod(commenterMember, req, feedback, emoji, newUrl);
   }
   return res.status(200).send("Comment Notification Sent");
 };
@@ -73,14 +69,14 @@ const CommentEventEntryPoint = async (res, req) => {
 export const sendAdaptiveCardMethod = async (
   user: any,
   req: any,
-  comment: string,
+  comment: any,
   emoji: any,
   newUrl: string
 ) => {
   await user.sendAdaptiveCard(
     AdaptiveCards.declare<any>(commentTemplate).render({
       ...req.body,
-      message: { comment, emoji },
+      message: { ...req.body.message, text: comment, emoji },
       commentUrl: newUrl,
     })
   );
