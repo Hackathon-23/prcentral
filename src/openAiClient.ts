@@ -1,7 +1,7 @@
 import { OpenAIClient, AzureKeyCredential } from  "@azure/openai";
 import  { resolve } from 'path';
 
-require('dotenv').config( { path:  resolve(__dirname,"../../env/.env.local") });
+// require('dotenv').config( { path:  resolve(__dirname,"../../env/.env.local") });
 
 export const client = () => {
   if (process.env.AZURE_OPENAI_END_POINT && process.env.AZURE_OPENAI_API_KEY) {

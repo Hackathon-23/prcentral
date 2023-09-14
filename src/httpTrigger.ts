@@ -39,7 +39,7 @@ const httpTrigger: AzureFunction = async function (
   }
 
   // Merge Request Event
-  if (eventType && eventType.includes("merge-request")) {
+  if (eventType && eventType.includes("gitlab")) {
     return MergeRequestEntryPoint(context.res, req);
   }
 
