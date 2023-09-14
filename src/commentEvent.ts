@@ -38,8 +38,6 @@ const CommentEventEntryPoint = async (res, req) => {
   const baseUrl =  req.body.resource.pullRequest.repository.remoteUrl.split("@"); 
   const newUrl = 'https://'+baseUrl[1]+'/pullrequest/'+req.body.resource.pullRequest.pullRequestId+'#'+newCommentUrlTimestamp;
 
-  console.log("newUrl: " +newUrl);
-
   if (member) {
     await member.sendAdaptiveCard(
       AdaptiveCards.declare<any>(commentTemplate).render({

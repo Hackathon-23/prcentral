@@ -41,7 +41,7 @@
                             "actions": [
                                 {
                                     "type": "Action.Submit",
-                                    "title": "Summary",
+                                    "title": "📃 Summary",
                                     "style": "positive",
                                     "data": {
                                         "event": "summary",
@@ -62,7 +62,7 @@
                             "actions": [
                                 {
                                     "type": "Action.Submit",
-                                    "title": "Rephrase",
+                                    "title": "🔂 Rephrase",
                                     "style": "positive",
                                     "data":{
                                         "event": "rephrase",
@@ -82,28 +82,8 @@
                             "type": "ActionSet",
                             "actions": [
                                 {
-                                    "type": "Action.ShowCard",
-                                    "title": "Suggest",
-                                    "card": {
-                                        "type": "AdaptiveCard"
-                                    },
-                                    "style": "positive",
-                                    "role": "Button"
-                                }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    "type": "Column",
-                    "width": "stretch",
-                    "items": [
-                        {
-                            "type": "ActionSet",
-                            "actions": [
-                                {
                                     "type": "Action.Submit",
-                                    "title": "Translate",
+                                    "title": " 🌍 Translate",
                                     "data": {
                                         "event": "translate",
                                         "value": "${resource.comment.content}"
