@@ -1,12 +1,12 @@
 import { AzureFunction, Context, HttpRequest } from "@azure/functions";
 import { AdaptiveCards } from "@microsoft/adaptivecards-tools";
 import notificationTemplate from "./adaptiveCards/notification-default.json";
-import commentTemplate from "./adaptiveCards/comment-pr.json";
 import { CardData } from "./cardModels";
 import { notificationApp } from "./internal/initialize";
 import CommentEventEntryPoint from "./commentEvent";
 import MergeRequestEntryPoint from "./mergeRequestEvent";
-import { analyzeSentiment } from "./internal/gptActions";
+import { pullRequestComments } from "./store";
+
 
 // An Azure Function HTTP trigger.
 //
@@ -35,6 +35,12 @@ const httpTrigger: AzureFunction = async function (
 
   // Comment Event
   if (eventType && eventType.includes("pullrequest-comment-event")) {
+    const pullRequestId = req.body.resource.pullRequest.pullRequestId;
+    if (pullRequestComments[pullRequestId] === undefined) {
+      pullRequestComments[pullRequestId] = [req.body.resource.comment.content];
+    } else {
+      pullRequestComments[pullRequestId].push(req.body.resource.comment.content);
+    }
     return CommentEventEntryPoint(context.res, req);
   }
 

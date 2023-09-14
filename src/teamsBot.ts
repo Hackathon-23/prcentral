@@ -1,6 +1,11 @@
 import { ActivityHandler, CardFactory } from "botbuilder";
 import { rephraseComment, translateComment } from "./internal/gptActions";
 
+import { ActivityHandler } from "botbuilder";
+import { rephraseComment, translateComment, summarizePrComments } from "./internal/gptActions";
+
+import { pullRequestComments } from "./store";
+
 const resultOutputCard = ({
   title,
   content,
@@ -68,7 +73,10 @@ export class TeamsBot extends ActivityHandler {
           //context.sendActivity(translation);
           next();
           break;
-        case "summarize":
+        case "summary":
+          const summary = await summarizePrComments(pullRequestComments[context.activity.value.value].join("\n"));
+          console.log(summary, 'summary');
+          context.sendActivity(summary.choices[0].message.content);
           break;
         case "suggest":
           break;
