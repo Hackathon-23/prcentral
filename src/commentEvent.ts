@@ -1,7 +1,7 @@
 import { AdaptiveCards } from "@microsoft/adaptivecards-tools";
 import commentTemplate from "./adaptiveCards/comment-pr.json";
 import { notificationApp } from "./internal/initialize";
-import { analyzeSentiment } from "./internal/analyzeSentiment";
+import { analyzeSentiment } from "./internal/gptActions";
 
 const CommentEventEntryPoint = async (res, req) => {
   const { resource } = req.body;
