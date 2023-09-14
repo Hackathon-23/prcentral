@@ -51,7 +51,7 @@ const CommentEventEntryPoint = async (res, req) => {
 
   if(comment.author.uniqueName && sentiment && sentiment.toLowerCase().includes("negative")){
     const phrased = rephraseComment(req.body.message);
-    const feedback = "Hey"+ comment.author.uniqueName +", you left a comment on Carol PR and it was abit harsh. This is how you can make it better." + phrased;
+    const feedback = "Hey"+ comment.author.uniqueName +", you left a comment on " + pullRequest.createdBy.uniqueName + " PR and it was abit harsh. This is how you can make it better." + phrased;
     await comment.author.uniqueName.sendAdaptiveCard(
       AdaptiveCards.declare<any>(commentTemplate).render({
         ...req.body,
