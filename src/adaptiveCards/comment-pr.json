@@ -40,12 +40,14 @@
                             "type": "ActionSet",
                             "actions": [
                                 {
-                                    "type": "Action.ShowCard",
-                                    "title": "Summarize",
-                                    "card": {
-                                        "type": "AdaptiveCard"
-                                    },
-                                    "style": "positive"
+                                    "type": "Action.Submit",
+                                    "title": "Summary",
+                                    "style": "positive",
+                                    "data": {
+                                        "event": "summary",
+                                        "value": "${resource.comment.content}"
+                                    }
+
                                 }
                             ]
                         }
@@ -63,6 +65,7 @@
                                     "title": "Rephrase",
                                     "style": "positive",
                                     "data":{
+                                        "event": "rephrase",
                                         "value": "${resource.comment.content}"
                                     }
                                 }
@@ -79,7 +82,7 @@
                             "actions": [
                                 {
                                     "type": "Action.ShowCard",
-                                    "title": "Suggestion",
+                                    "title": "Suggest",
                                     "card": {
                                         "type": "AdaptiveCard"
                                     },
@@ -98,13 +101,13 @@
                             "type": "ActionSet",
                             "actions": [
                                 {
-                                    "type": "Action.ShowCard",
+                                    "type": "Action.Submit",
                                     "title": "Translate",
-                                    "card": {
-                                        "type": "AdaptiveCard"
-                                    },
-                                    "style": "positive",
-                                    "role": "Button"
+                                    "data": {
+                                        "event": "translate",
+                                        "value": "${resource.comment.content}"
+                                    }
+                                    
                                 }
                             ]
                         }

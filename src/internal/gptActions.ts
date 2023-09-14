@@ -1,4 +1,3 @@
-import { env } from "process";
 import { client } from "../openAiClient";
 
 export async function analyzeSentiment(textToAnalyze: string) {
@@ -14,10 +13,15 @@ export async function analyzeSentiment(textToAnalyze: string) {
   return completion;
 }
 
-export async function rephraseMessage(textToAnalyze:string) {
+export async function rephraseComment(textToAnalyze: string) {
   if (!client) {
     return null;
   }
-  const completion = await client().getChatCompletions("gpt-35-turbo-16k", [{content: `Rephrase this text:'${textToAnalyze}'`, role: 'assistant' }]);
+  const completion = await client().getChatCompletions("gpt-35-turbo-16k", [{ content: `Rephrase this text:'${textToAnalyze}'`, role: 'assistant' }]);
   return completion;
 }
+
+export async function translateComment(textToAnalyze: string) {
+};
+
+
