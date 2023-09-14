@@ -13,13 +13,15 @@ const MergeRequestEntryPoint = async (res, req) => {
     status_url: "https://adaptivecards.io/content/pending.png",
     approval_date: "2019-07-15T22:33:12+0800",
     approver: "Peter",
-    approver_email: "peter",
+    approver_email: "peter@contoso.com",
     pr_link: "https://adaptivecards.io",
   };
 
-  const { approver_email } = req.body;
+  const { approver } = req.body;
   const member = await notificationApp.notification.findMember(
-    async (m) => m.account.email.toLocaleLowerCase() === `${approver_email}@wc061.onmicrosoft.com`.toLocaleLowerCase()
+    async (m) =>
+      m.account.email.toLocaleLowerCase() ===
+      `${approver}@wc061.onmicrosoft.com`.toLocaleLowerCase()
   );
 
   if (member) {
