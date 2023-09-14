@@ -6,7 +6,6 @@ import { CardData } from "./cardModels";
 import { notificationApp } from "./internal/initialize";
 import CommentEventEntryPoint from "./commentEvent";
 import MergeRequestEntryPoint from "./mergeRequestEvent";
-import { analyzeSentiment } from "./internal/analyzeSentiment";
 
 // An Azure Function HTTP trigger.
 //
