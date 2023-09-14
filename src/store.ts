@@ -1,1 +1,6 @@
-export const pullRequestComments: Record<string, string[]> = {};
+export const pullRequestComments: Record<string, [
+    {
+        author: string,
+        comment: string,
+    }
+]> = {};

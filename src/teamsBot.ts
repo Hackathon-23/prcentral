@@ -72,9 +72,20 @@ export class TeamsBot extends ActivityHandler {
           next();
           break;
         case "summary":
-          const summary = await summarizePrComments(pullRequestComments[context.activity.value.value].join("\n"));
-          console.log(summary, 'summary');
-          context.sendActivity(summary.choices[0].message.content);
+          try {
+            const title = `Summarization of Pull Request #${context.activity.value.value} comments is complete ✅`;
+            const pr = pullRequestComments[context.activity.value.value]
+            const mappedComments = pr.map((comment, index) => `${index + 1}. ${comment.author} commented ${comment.comment}`).join("\n");
+            const summary = await summarizePrComments(mappedComments);
+            const content = summary.choices[0].message.content;
+            const card = CardFactory.adaptiveCard(
+              resultOutputCard({ title, content })
+            );
+            context.sendActivity({ attachments: [card] });
+            next();
+          } catch (e) {
+            console.error("An error occurred while generating the summary", e);
+          }
           break;
         case "suggest":
           break;

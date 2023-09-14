@@ -29,7 +29,7 @@ export async function summarizePrComments(prComments: string) {
     return null;
   }
   console.log("in summarize")
-  const completion = await client().getChatCompletions("gpt-35-turbo-16k", [{ content: `Summarize these comments:'${prComments}'`, role: 'assistant' }]);
+  const completion = await client().getChatCompletions("gpt-35-turbo-16k", [{ content: `Summarize these comments into different paragraphs by author:'${prComments}'`, role: 'assistant' }]);
   return completion;
 }
 

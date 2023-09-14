@@ -66,7 +66,8 @@
                                     "style": "positive",
                                     "data":{
                                         "event": "rephrase",
-                                        "value": "${resource.comment.content}"
+                                        "value": "${resource.comment.content}",
+                                        "author": "${resource.comment.author.displayName}"
                                     }
                                 }
                             ]

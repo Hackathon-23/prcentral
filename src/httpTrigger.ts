@@ -36,10 +36,14 @@ const httpTrigger: AzureFunction = async function (
   // Comment Event
   if (eventType && eventType.includes("pullrequest-comment-event")) {
     const pullRequestId = req.body.resource.pullRequest.pullRequestId;
+    const prData = {
+      author: req.body.resource.comment.author.displayName,
+      comment: req.body.resource.comment.content,
+    }
     if (pullRequestComments[pullRequestId] === undefined) {
-      pullRequestComments[pullRequestId] = [req.body.resource.comment.content];
+      pullRequestComments[pullRequestId] = [prData];
     } else {
-      pullRequestComments[pullRequestId].push(req.body.resource.comment.content);
+      pullRequestComments[pullRequestId].push(prData);
     }
     return CommentEventEntryPoint(context.res, req);
   }
