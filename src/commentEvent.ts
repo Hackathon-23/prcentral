@@ -2,8 +2,9 @@ import { AdaptiveCards } from "@microsoft/adaptivecards-tools";
 import commentTemplate from "./adaptiveCards/comment-pr.json";
 import { notificationApp } from "./internal/initialize";
 import { analyzeSentiment, rephraseComment } from "./internal/gptActions";
+import { url } from "inspector";
 
-const CommentEventEntryPoint = async (res, req) => {
+export const CommentEventEntryPoint = async (res, req) => {
   const { resource } = req.body;
   const { pullRequest, comment } = resource;
 
@@ -40,27 +41,29 @@ const CommentEventEntryPoint = async (res, req) => {
   const newUrl = 'https://'+baseUrl[1]+'/pullrequest/'+req.body.resource.pullRequest.pullRequestId+'#'+newCommentUrlTimestamp;
 
   if (member) {
-    await member.sendAdaptiveCard(
-      AdaptiveCards.declare<any>(commentTemplate).render({
-        ...req.body,
-        message: { ...req.body.message, emoji },
-        commentUrl: newUrl
-      })
-    );
+    sendAdaptiveCardMethod(member,req, req.body.message, emoji, newUrl);
   }
 
   if(comment.author.uniqueName && sentiment && sentiment.toLowerCase().includes("negative")){
     const phrased = rephraseComment(req.body.message);
     const feedback = "Hey"+ comment.author.uniqueName +", you left a comment on " + pullRequest.createdBy.uniqueName + " PR and it was abit harsh. This is how you can make it better." + phrased;
-    await comment.author.uniqueName.sendAdaptiveCard(
-      AdaptiveCards.declare<any>(commentTemplate).render({
-        ...req.body,
-        message: { feedback, emoji },
-        commentUrl: newUrl
-      })
-    );
+    sendAdaptiveCardMethod(comment.author.uniqueName,req, feedback, emoji, newUrl);
+   
   }
   return res.status(200).send("Comment Notification Sent");
 };
 
-export default CommentEventEntryPoint;
+export const sendAdaptiveCardMethod = async (user:any, req: any, comment:string, emoji:any, newUrl: string) => {
+
+  await user.sendAdaptiveCard(
+    AdaptiveCards.declare<any>(commentTemplate).render({
+      ...req.body,
+      message: { comment, emoji },
+      commentUrl: newUrl
+    })
+  );
+
+
+}
+
+//export default CommentEventEntryPoint;
